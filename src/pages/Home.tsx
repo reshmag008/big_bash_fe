@@ -3,7 +3,6 @@ import { Carousel } from "react-responsive-carousel";
 
 import banner from "../assets/banner.jpeg";
 
-import banner1 from "../assets/banner1.jpeg";
 
 
 
@@ -11,14 +10,14 @@ const HomePage = () => {
   return (
     <div className="flex items-center justify-center p-4">
       <div className="bg-white rounded-xl shadow-lg overflow-hidden max-w-md w-full">
-        <Carousel
+        {/* <Carousel
           showThumbs={false}
           autoPlay
           infiniteLoop
           interval={3000}
           showStatus={false}
           swipeable
-        >
+        > */}
           <div>
             <img
               src={banner}
@@ -27,15 +26,15 @@ const HomePage = () => {
             />
           </div>
 
-          <div>
+          {/* <div>
             <img
               src={banner1}
               alt="Banner"
               className="w-full h-auto object-cover"
             />
-          </div>
+          </div> */}
 
-        </Carousel>
+        {/* </Carousel> */}
       </div>
     </div>
   );
