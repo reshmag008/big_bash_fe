@@ -63,7 +63,7 @@ const AuctionPlayerPage: React.FC = () => {
   }, []);
 
 
-    const GetPlayer = () => {
+  const GetPlayer = () => {
     localStorage.setItem('close_popup', 'false');
     localStorage.setItem("team_complete",  JSON.stringify({}))
     console.log("searchText== ", searchText);
@@ -76,31 +76,31 @@ const AuctionPlayerPage: React.FC = () => {
     PlayerService()
       .GetNonBidPlayers(searchText)
       .then((response: any) => {
+        setIsLoading(false);
         let players = response?.data;
         setSearchText('')
-        if (players.length === 0) {
+        if (!players) {
           toast.success("No pending players");
           localStorage.setItem("selectedPlayer", JSON.stringify({}));
           localStorage.setItem("team_complete",  JSON.stringify({}))
           localStorage.setItem("currentBidTeam", JSON.stringify({}));
           localStorage.setItem('close_popup', 'false');
         }
-        if (players.length === 1) {
-          setCurrentBidPlayer(players[0]);
-          localStorage.setItem("selectedPlayer", JSON.stringify(players[0]));
+        if (players?.id) {
+          setCurrentBidPlayer(players);
+          localStorage.setItem("selectedPlayer", JSON.stringify(players));
           localStorage.setItem("currentBidTeam", JSON.stringify({}));
           localStorage.setItem("team_complete",  JSON.stringify({}))
           localStorage.setItem('close_popup', 'false');
-          PlayerService().displayPlayer(players[0]).then((response: any) => {
+          PlayerService().displayPlayer(players).then((response: any) => {
       console.log("response== ", response);
     })
-          setIsLoading(false);
-        } else {
-          setPlayers(players);
-          selectRandomPlayer();
-        }
+      socket.emit('current_player', JSON.stringify(players));
+          
+        } 
       });
   };
+
 
   const selectRandomPlayer = () => {
     const random = Math.floor(Math.random() * players.length);
@@ -209,6 +209,7 @@ const AuctionPlayerPage: React.FC = () => {
 
 
     const sellPlayer = () => {
+      localStorage.setItem("selectedPlayer", JSON.stringify({}));
     setIsLoading(true);
     if (currentBidTeam && currentBidTeam.id) {
       let params = {
@@ -247,6 +248,7 @@ const AuctionPlayerPage: React.FC = () => {
   }
 
   const InvokeClosePopup = () => {
+    setOpenPopUp(false);
     localStorage.setItem('close_popup', 'true');
     PlayerService().closePopup()
   }
@@ -275,6 +277,7 @@ const AuctionPlayerPage: React.FC = () => {
     }
 
     PlayerService().setUnsoldPlayer(params).then((response: any) => {
+      localStorage.setItem("selectedPlayer", JSON.stringify({}));
       console.log("response== ", response.data);
       GetPlayer();
     })
@@ -315,7 +318,7 @@ const AuctionPlayerPage: React.FC = () => {
         {/* Close Button */}
         <button
           type="button"
-          onClick={() => setOpenPopUp(false)}
+          onClick={() => InvokeClosePopup()}
           className="absolute right-3 top-3 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-white/5 text-slate-400 transition hover:bg-white/10 hover:text-white"
           aria-label="Close"
         >
